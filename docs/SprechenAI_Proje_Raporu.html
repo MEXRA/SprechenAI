@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SprechenAI — Proje Yapısı ve Teknik Açıklama</title>
+  <style>
+    @page { size:A4; margin:0; }
+    :root { --ink:#17231e; --green:#245b3d; --green2:#358958; --cream:#f7f5ee; --gold:#e3b94f; --coral:#f48765; --muted:#617068; --line:#dce2dd; }
+    * { box-sizing:border-box; }
+    html, body { margin:0; padding:0; background:#dfe5e0; color:var(--ink); font-family:"Segoe UI", Arial, sans-serif; }
+    body { counter-reset:page; }
+    .page { position:relative; width:210mm; min-height:297mm; margin:8mm auto; padding:17mm 18mm 15mm; overflow:hidden; background:var(--cream); box-shadow:0 12px 40px #1d35282b; page-break-after:always; counter-increment:page; }
+    .page:last-child { page-break-after:auto; }
+    .page::after { content:counter(page, decimal-leading-zero); position:absolute; right:18mm; bottom:8mm; color:#7f8d85; font-size:9pt; font-weight:700; letter-spacing:.12em; }
+    .topline { display:flex; justify-content:space-between; align-items:center; margin-bottom:11mm; padding-bottom:4mm; border-bottom:1px solid var(--line); color:var(--muted); font-size:8.5pt; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .brand { display:flex; align-items:center; gap:3mm; color:var(--ink); font-size:13pt; font-weight:900; letter-spacing:-.04em; text-transform:none; }
+    .brand-icon { position:relative; display:grid; place-items:center; width:10mm; height:10mm; color:#fff; background:var(--green); border-radius:3mm; font-size:13pt; }
+    .brand-icon::after { content:""; position:absolute; right:-1mm; top:-1mm; width:2.8mm; height:2.8mm; border:1.2mm solid var(--cream); background:var(--gold); border-radius:50%; }
+    h1 { margin:0; font-size:31pt; line-height:1.04; letter-spacing:-.045em; }
+    h2 { margin:0 0 5mm; font-size:22pt; line-height:1.08; letter-spacing:-.035em; }
+    h3 { margin:0 0 2mm; font-size:13pt; letter-spacing:-.018em; }
+    h4 { margin:0 0 1.5mm; font-size:10.5pt; }
+    p { margin:0 0 3.2mm; font-size:10pt; line-height:1.55; color:var(--muted); }
+    strong { color:var(--ink); }
+    .eyebrow { margin-bottom:3mm; color:var(--green2); font-size:8pt; font-weight:900; letter-spacing:.2em; text-transform:uppercase; }
+    .lead { max-width:150mm; color:#46564e; font-size:13pt; line-height:1.55; }
+    .small { font-size:8.5pt; }
+    .tiny { font-size:7.6pt; line-height:1.42; }
+    .muted { color:#7b8981; }
+    .green { color:var(--green2); }
+    .coral { color:#c65f40; }
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:4mm; }
+    .card { padding:5mm; border:1px solid var(--line); border-radius:5mm; background:#ffffffb8; }
+    .card.dark { border-color:var(--green); color:#fff; background:var(--green); }
+    .card.dark p, .card.dark .muted { color:#d6e1da; }
+    .card.soft { background:#edf5ef; border-color:#d5e7da; }
+    .number { display:block; margin-bottom:4mm; color:var(--coral); font-size:8pt; font-weight:900; letter-spacing:.15em; }
+    .pill { display:inline-block; margin:0 1.2mm 1.2mm 0; padding:1.2mm 2.5mm; border-radius:99px; background:#e5efe8; color:var(--green); font-size:7.5pt; font-weight:800; }
+    .pill.gold { background:#fff2c9; color:#765904; }
+    .pill.coral { background:#ffebe3; color:#a84c31; }
+    .stat { padding:5mm; border-radius:5mm; background:#fff; }
+    .stat b { display:block; margin-bottom:1.5mm; color:var(--green); font-size:22pt; letter-spacing:-.04em; }
+    .stat span { color:var(--muted); font-size:8.5pt; font-weight:700; }
+    .flow { display:flex; align-items:stretch; gap:2mm; margin:6mm 0; }
+    .flow .node { flex:1; padding:4mm 2mm; border-radius:4mm; background:#fff; border:1px solid var(--line); text-align:center; }
+    .flow .node b { display:block; font-size:9pt; }
+    .flow .node span { display:block; margin-top:1mm; color:var(--muted); font-size:7.3pt; line-height:1.35; }
+    .flow .arrow { align-self:center; color:var(--coral); font-weight:900; }
+    table { width:100%; border-collapse:collapse; font-size:8.5pt; line-height:1.42; }
+    th { padding:2.5mm 2mm; color:var(--green); border-bottom:1.5px solid var(--green); font-size:7.4pt; letter-spacing:.08em; text-align:left; text-transform:uppercase; }
+    td { padding:2.7mm 2mm; border-bottom:1px solid var(--line); vertical-align:top; color:#526158; }
+    td:first-child { color:var(--ink); font-weight:700; }
+    code { color:#294f3b; font-family:Consolas,"Courier New",monospace; font-size:.92em; }
+    pre { margin:3mm 0; padding:4mm; border-radius:4mm; overflow:hidden; color:#e9f1ec; background:#183829; font:7.5pt/1.5 Consolas,"Courier New",monospace; white-space:pre-wrap; }
+    .tree { padding:5mm; border-radius:5mm; background:#183829; color:#eaf1ed; font:7.7pt/1.52 Consolas,"Courier New",monospace; }
+    .tree .hi { color:#f0c85e; font-weight:700; }
+    .tree .dim { color:#9ab2a4; }
+    .callout { display:flex; gap:4mm; margin:5mm 0; padding:4mm 5mm; border-left:1.5mm solid var(--coral); border-radius:0 4mm 4mm 0; background:#fff4ef; }
+    .callout b { min-width:25mm; color:#aa5035; font-size:9pt; }
+    .callout p { margin:0; font-size:8.8pt; }
+    .checklist { display:grid; grid-template-columns:1fr 1fr; gap:2.5mm 5mm; margin:0; padding:0; list-style:none; }
+    .checklist li { position:relative; padding-left:7mm; color:#526158; font-size:9pt; line-height:1.45; }
+    .checklist li::before { content:"✓"; position:absolute; left:0; top:0; display:grid; place-items:center; width:4.8mm; height:4.8mm; border-radius:50%; color:#fff; background:var(--green2); font-size:7pt; font-weight:900; }
+    .bars { display:grid; gap:2.7mm; }
+    .bar-row { display:grid; grid-template-columns:35mm 1fr 12mm; align-items:center; gap:3mm; font-size:8pt; font-weight:700; }
+    .track { height:2.6mm; overflow:hidden; border-radius:9px; background:#dfe7e1; }
+    .fill { height:100%; border-radius:9px; background:var(--green2); }
+    .case-line { display:grid; grid-template-columns:34mm 1fr; gap:3mm; padding:2.5mm 0; border-bottom:1px solid var(--line); }
+    .case-line:last-child { border-bottom:0; }
+    .case-line b { font-size:8.5pt; }
+    .case-line span { color:var(--muted); font-size:8.5pt; }
+    .cover { display:flex; flex-direction:column; justify-content:space-between; color:#fff; background:var(--green); }
+    .cover::before { content:""; position:absolute; width:115mm; height:115mm; right:-35mm; top:-28mm; border:1px solid #ffffff28; border-radius:50%; box-shadow:0 0 0 22mm #ffffff0b, 0 0 0 44mm #ffffff08; }
+    .cover::after { color:#d8e4dc; }
+    .cover .brand { color:#fff; }
+    .cover .brand-icon { color:var(--green); background:var(--gold); }
+    .cover .brand-icon::after { border-color:var(--green); background:var(--coral); }
+    .cover h1 { max-width:150mm; font-size:42pt; }
+    .cover .lead { color:#d8e4dc; }
+    .cover-meta { display:grid; grid-template-columns:repeat(3,1fr); gap:4mm; padding-top:7mm; border-top:1px solid #ffffff2d; }
+    .cover-meta span { display:block; color:#a9bdb1; font-size:7.5pt; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    .cover-meta b { display:block; margin-top:1.5mm; font-size:10pt; }
+    .erd { display:grid; grid-template-columns:1fr 12mm 1fr 12mm 1fr; align-items:center; margin:7mm 0; }
+    .entity { min-height:28mm; padding:4mm; border:1px solid #cddbd1; border-radius:4mm; background:#fff; }
+    .entity b { display:block; margin-bottom:2mm; color:var(--green); font-size:10pt; }
+    .entity span { display:block; color:var(--muted); font-size:7.4pt; line-height:1.45; }
+    .relation { color:var(--coral); text-align:center; font-size:14pt; font-weight:900; }
+    .footer-note { position:absolute; left:18mm; bottom:8mm; color:#829087; font-size:7pt; }
+    @media print {
+      html, body { background:#fff; }
+      .page { width:210mm; height:296mm; min-height:296mm; margin:0; box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <section class="page cover">
+    <div class="brand"><span class="brand-icon">▰</span> SprechenAI</div>
+    <div>
+      <div class="eyebrow" style="color:#f0c85e">Proje teslim raporu · v0.1</div>
+      <h1>Gerçek hayat için Almanca konuşma koçu</h1>
+      <p class="lead" style="margin-top:8mm">Kurulan frontend, backend ve PostgreSQL hazırlığının; önemli dosyaların ve çalışan kullanıcı deneyiminin teknik açıklaması.</p>
+      <div style="margin-top:9mm">
+        <span class="pill gold">Next.js + TypeScript</span>
+        <span class="pill gold">Tailwind CSS</span>
+        <span class="pill gold">ASP.NET Core</span>
+        <span class="pill gold">PostgreSQL</span>
+        <span class="pill coral">AI entegrasyonuna hazır</span>
+      </div>
+    </div>
+    <div class="cover-meta">
+      <div><span>Hazırlanma tarihi</span><b>4 Eylül 2026</b></div>
+      <div><span>Çalışma dizini</span><b>SprechenAI</b></div>
+      <div><span>Durum</span><b>Build başarılı</b></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Genel Bakış</span></div>
+    <div class="eyebrow">Ne oluşturuldu?</div>
+    <h2>İlk sürümün kapsamı</h2>
+    <p class="lead">SprechenAI; günlük hayatta karşılaşılan durumlar üzerinden Almanca konuşma pratiği yaptıran, cümleyi yalnızca düzeltmekle kalmayıp <strong>neden doğru olduğunu açıklayan</strong> bir öğrenme ürünü olarak tasarlandı.</p>
+    <div class="grid3" style="margin-top:8mm">
+      <div class="stat"><b>4</b><span>hazır frontend sayfası</span></div>
+      <div class="stat"><b>10</b><span>gerçek hayat senaryosu</span></div>
+      <div class="stat"><b>8</b><span>hazır API rotası</span></div>
+    </div>
+    <div class="grid2" style="margin-top:5mm">
+      <div class="card">
+        <span class="number">KULLANICI DENEYİMİ</span>
+        <h3>Öğrenme akışı</h3>
+        <p>Kullanıcı bir senaryo seçer, seviyesini ve açıklama derinliğini belirler, örnek konuşmaya katılır, gramer parçalarını inceler ve hatasını anında görür.</p>
+        <span class="pill">A1–B2</span><span class="pill">Quick</span><span class="pill">Normal</span><span class="pill">Deep</span>
+      </div>
+      <div class="card">
+        <span class="number">TEKNİK TEMEL</span>
+        <h3>Değiştirilebilir mimari</h3>
+        <p>Frontend şimdilik yerel mock veriyle bağımsız çalışır. Backend tarafında yapay zekâ sağlayıcısı bir arayüz arkasındadır; ileride gerçek OpenAI istemcisi eklenebilir.</p>
+        <span class="pill coral">Mock bugün</span><span class="pill">OpenAI yarın</span>
+      </div>
+    </div>
+    <h3 style="margin-top:8mm">Tamamlanan başlıca özellikler</h3>
+    <ul class="checklist" style="margin-top:4mm">
+      <li>Modern, responsive ana sayfa ve navigasyon</li>
+      <li>Aranabilir ve seçilebilir senaryo kartları</li>
+      <li>Gerçekçi Almanca–Türkçe mock konuşma</li>
+      <li>Tıklanabilir NOM / AKK / DAT etiketleri</li>
+      <li>Masaüstü Grammar Inspector paneli</li>
+      <li>Mobil grammar drawer deneyimi</li>
+      <li>Çalışan kullanıcı cevabı düzeltme akışı</li>
+      <li>Mock gelişim yüzdeleri ve yaygın hatalar</li>
+      <li>Controller + service + data katmanlı API</li>
+      <li>PostgreSQL için EF Core entity eşlemeleri</li>
+      <li>PWA hazırlığı için web app manifest</li>
+      <li>Docker Compose veritabanı servisi</li>
+    </ul>
+    <div class="callout"><b>Bilerek yok</b><p>Bu aşamada gerçek OpenAI isteği, kimlik doğrulama ve kalıcı kullanıcı verisi uygulanmadı. Ekranlar ve API davranışları çalışan mock verilerle hazırlanmıştır.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Mimari</span></div>
+    <div class="eyebrow">Büyük resim</div>
+    <h2>Sistem nasıl bölündü?</h2>
+    <p>Proje iki ana uygulamaya ayrılır. Bu ayrım arayüzün, API'nin ve veri katmanının birbirinden bağımsız geliştirilebilmesini sağlar.</p>
+    <div class="flow">
+      <div class="node"><b>Next.js UI</b><span>Sayfalar, bileşenler, responsive deneyim</span></div><div class="arrow">→</div>
+      <div class="node"><b>ASP.NET API</b><span>Controller, sözleşme ve servisler</span></div><div class="arrow">→</div>
+      <div class="node"><b>PostgreSQL</b><span>EF Core entity ve ilişkileri</span></div>
+    </div>
+    <div class="tree">
+<span class="hi">SprechenAI/</span>
+├─ <span class="hi">frontend/</span>                 <span class="dim">Next.js uygulaması</span>
+│  ├─ app/                     <span class="dim">Sayfalar, layout, global CSS</span>
+│  ├─ components/              <span class="dim">Tekrar kullanılabilir UI parçaları</span>
+│  ├─ data/                    <span class="dim">Tipli mock içerikler</span>
+│  ├─ types/                   <span class="dim">TypeScript veri tipleri</span>
+│  └─ public/                  <span class="dim">PWA manifest</span>
+├─ <span class="hi">backend/</span>
+│  ├─ SprechenAI.slnx          <span class="dim">.NET solution</span>
+│  └─ SprechenAI.Api/
+│     ├─ Controllers/          <span class="dim">HTTP giriş noktaları</span>
+│     ├─ Services/             <span class="dim">Uygulama iş kuralları</span>
+│     ├─ Contracts/            <span class="dim">Request/response modelleri</span>
+│     ├─ Domain/Entities/      <span class="dim">Veritabanı varlıkları</span>
+│     └─ Data/                 <span class="dim">EF Core DbContext</span>
+├─ <span class="hi">docker-compose.yml</span>       <span class="dim">PostgreSQL konteyneri</span>
+├─ <span class="hi">.env.example</span>             <span class="dim">Ortam değişkeni örneği</span>
+└─ <span class="hi">README.md</span>                <span class="dim">Kurulum ve kullanım rehberi</span>
+    </div>
+    <div class="grid2" style="margin-top:6mm">
+      <div class="card soft"><h3>Bugünkü çalışma şekli</h3><p>Frontend doğrudan <code>data/</code> altındaki mock içerikleri kullanır. Böylece PostgreSQL veya backend kapalıyken bile bütün demo deneyimi çalışır.</p></div>
+      <div class="card"><h3>Gelecekteki çalışma şekli</h3><p>Mock veriler API servislerine taşınır; gerçek AI implementasyonu <code>IAiConversationClient</code> arayüzüne bağlanır ve sonuçlar EF Core üzerinden saklanır.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Frontend Sayfaları</span></div>
+    <div class="eyebrow">Kullanıcı arayüzü</div>
+    <h2>Dört temel ekran</h2>
+    <div class="grid2" style="margin-top:6mm">
+      <div class="card"><span class="number">01 · HOME</span><h3>Ana sayfa</h3><p>Ürünün değer önerisini, çalışma yaklaşımını ve “Choose a scenario / Try the demo” aksiyonlarını sunar. Masaüstü ve mobil navigasyon buradan başlar.</p><code>frontend/app/page.tsx</code></div>
+      <div class="card"><span class="number">02 · SCENARIOS</span><h3>Senaryo seçimi</h3><p>10 senaryoyu kart düzeninde gösterir. Arama alanı gerçekten filtreleme yapar; seçilen kart kullanıcıyı konuşma sayfasına götürür.</p><code>frontend/app/scenarios/page.tsx</code></div>
+      <div class="card"><span class="number">03 · CONVERSATION</span><h3>Konuşma</h3><p>Almanca–Türkçe mesajlar, açıklama düğmesi, seviye/derinlik kontrolleri, gramer etiketleri ve cevap düzeltme akışını birleştirir.</p><code>frontend/app/conversation/page.tsx</code></div>
+      <div class="card"><span class="number">04 · PROGRESS</span><h3>Gelişim</h3><p>Konu bazlı yüzdeler, pratik serisi, genel güven skoru ve “Common Mistakes” alanını gösterir. Zaman filtresi ve hata açıklaması etkileşimlidir.</p><code>frontend/app/progress/page.tsx</code></div>
+    </div>
+    <h3 style="margin-top:8mm">Senaryo kataloğu</h3>
+    <div style="margin-top:3mm">
+      <span class="pill">Restaurant</span><span class="pill">Doctor</span><span class="pill">Work</span><span class="pill">Supermarket</span><span class="pill">Airport</span><span class="pill">Apartment Viewing</span><span class="pill">Meeting New People</span><span class="pill">Football</span><span class="pill">Date</span><span class="pill coral">Custom Scenario</span>
+    </div>
+    <h3 style="margin-top:7mm">Sayfa yönlendirme yapısı</h3>
+    <table style="margin-top:3mm">
+      <thead><tr><th>URL</th><th>Sayfa</th><th>Ana kullanıcı aksiyonu</th></tr></thead>
+      <tbody>
+        <tr><td><code>/</code></td><td>Home</td><td>Ürünü tanı, senaryo veya demoya geç</td></tr>
+        <tr><td><code>/scenarios</code></td><td>Scenario Selection</td><td>Ara, kart seç, pratiği başlat</td></tr>
+        <tr><td><code>/conversation</code></td><td>Conversation</td><td>Mesajı incele, cevabı düzelt</td></tr>
+        <tr><td><code>/progress</code></td><td>Progress</td><td>Konuları ve tekrar eden hataları gör</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Responsive</b><p>Sayfalar mobil öncelikli Tailwind sınıflarıyla yazıldı. Üst navigasyon küçük ekranda alt menüye dönüşür; Grammar Inspector ise kalıcı yan panel yerine drawer olarak açılır.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Önemli Frontend Dosyaları</span></div>
+    <div class="eyebrow">Dosya rehberi</div>
+    <h2>Frontend'in kritik parçaları</h2>
+    <table>
+      <thead><tr><th style="width:44%">Dosya</th><th>Görevi ve önemi</th></tr></thead>
+      <tbody>
+        <tr><td><code>app/layout.tsx</code></td><td>Uygulamanın kök layout'u. Metadata, viewport, manifest bağlantısı ve bütün sayfalarda kullanılan <code>AppShell</code> burada kurulur.</td></tr>
+        <tr><td><code>app/globals.css</code></td><td>Renk zemini, seçim/focus davranışı, animasyon, grid dokusu ve erişilebilir reduced-motion ayarları.</td></tr>
+        <tr><td><code>components/layout/AppShell.tsx</code></td><td>Header, içerik ve mobil alt navigasyonu tek bir ortak kabukta birleştirir.</td></tr>
+        <tr><td><code>components/layout/Header.tsx</code></td><td>Aktif rotayı algılayan masaüstü menüsü ve “Start practice” aksiyonu.</td></tr>
+        <tr><td><code>components/layout/MobileNav.tsx</code></td><td>Mobilde başparmak erişimine uygun, sabit alt navigasyon.</td></tr>
+        <tr><td><code>components/scenarios/ScenarioGrid.tsx</code></td><td>Arama, filtreleme ve seçili senaryo state'ini yönetir.</td></tr>
+        <tr><td><code>components/conversation/ConversationWorkspace.tsx</code></td><td>Konuşma sayfasının ana orkestratörü: seviye, açıklama detayı, seçili gramer ögesi ve mobil drawer state'i.</td></tr>
+        <tr><td><code>components/conversation/ChatMessage.tsx</code></td><td>Koç/kullanıcı mesajlarını, çeviriyi, etiketleri ve açılır cümle açıklamasını üretir.</td></tr>
+        <tr><td><code>components/conversation/GrammarInspector.tsx</code></td><td>Seçilen dil parçasının isim, artikel, hâl, sebep, dönüşüm, kural, örnek ve anlam ayrıntılarını gösterir.</td></tr>
+        <tr><td><code>components/conversation/CorrectionComposer.tsx</code></td><td>Kullanıcının örnek cevabını gerçekten kontrol eder; yanlış/doğru varyant ve Dativ sebebini gösterir.</td></tr>
+        <tr><td><code>data/conversation.ts</code></td><td>Konuşma mesajlarıyla yapılandırılmış gramer açıklamalarının tek, tipli mock veri kaynağı.</td></tr>
+        <tr><td><code>types/index.ts</code></td><td><code>LearningLevel</code>, <code>GrammarItem</code>, <code>ConversationMessage</code> gibi ortak TypeScript sözleşmeleri.</td></tr>
+        <tr><td><code>tailwind.config.ts</code></td><td>Marka renkleri, gölgeler, yuvarlaklıklar ve taranacak kaynak yolları.</td></tr>
+        <tr><td><code>public/manifest.webmanifest</code></td><td>Ad, kısa ad, tema rengi ve standalone davranışıyla ileride PWA'ya dönüşümün başlangıcı.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Neden parçalara ayrıldı?</b><p>State yönetimi, görsel sunum ve mock veri aynı dosyada toplanmadı. Böylece gerçek API bağlandığında UI bileşenlerinin yeniden yazılması gerekmez.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Konuşma ve Gramer</span></div>
+    <div class="eyebrow">Temel ürün özelliği</div>
+    <h2>Cümle neden böyle kurulmuş?</h2>
+    <div class="card dark" style="margin-top:6mm">
+      <span class="number" style="color:#f0c85e">ÖRNEK ALMANCA CÜMLE</span>
+      <h3 style="font-size:18pt">Ich gehe mit meinem Freund ins Kino.</h3>
+      <p>Arkadaşımla sinemaya gidiyorum.</p>
+      <span class="pill gold">NOM · Ich</span><span class="pill gold">VERB · gehe</span><span class="pill coral">DAT · mit meinem Freund</span><span class="pill coral">AKK · ins Kino</span>
+    </div>
+    <div class="grid2" style="margin-top:5mm">
+      <div class="card soft">
+        <h3>mit meinem Freund</h3>
+        <div class="case-line"><b>Edat</b><span><strong>mit</strong> her zaman Dativ alır.</span></div>
+        <div class="case-line"><b>Temel isim</b><span>Freund = <strong>der Freund</strong></span></div>
+        <div class="case-line"><b>Dönüşüm</b><span>der Freund → <strong>dem Freund</strong></span></div>
+        <div class="case-line"><b>Possessiv</b><span>mein Freund → <strong>meinem Freund</strong></span></div>
+      </div>
+      <div class="card">
+        <h3>ins Kino</h3>
+        <div class="case-line"><b>Temel isim</b><span>Kino = <strong>das Kino</strong></span></div>
+        <div class="case-line"><b>Kısaltma</b><span>in + das = <strong>ins</strong></span></div>
+        <div class="case-line"><b>Anlam</b><span>Bir hedefe doğru hareket</span></div>
+        <div class="case-line"><b>Sonuç</b><span>“Wohin?” → <strong>Akkusativ</strong></span></div>
+      </div>
+    </div>
+    <h3 style="margin-top:7mm">Deep görünümdeki artikel pusulası</h3>
+    <table style="margin-top:3mm">
+      <thead><tr><th>Artikel türü</th><th>Nominativ</th><th>Akkusativ</th><th>Dativ</th></tr></thead>
+      <tbody>
+        <tr><td>Belirli artikel</td><td>der</td><td>den</td><td>dem</td></tr>
+        <tr><td>Belirsiz artikel</td><td>ein</td><td>einen</td><td>einem</td></tr>
+        <tr><td>İyelik artikeli</td><td>mein</td><td>meinen</td><td>meinem</td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:5mm">
+      <div class="card"><h4>Kısaltma örnekleri</h4><p class="small"><strong>in + das = ins</strong><br>in + dem = im<br>an + das = ans<br>zu + dem = zum</p></div>
+      <div class="card"><h4>Açıklama derinliği</h4><p class="small"><strong>Quick:</strong> sebep + basit örnek<br><strong>Normal:</strong> dönüşüm ve edat<br><strong>Deep:</strong> kural + kelime sırası + referans</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Düzeltme ve Gelişim</span></div>
+    <div class="eyebrow">Çalışan mock etkileşimler</div>
+    <h2>Hata, açıklamaya dönüşüyor</h2>
+    <p class="lead">Kullanıcı cevabı yalnızca kırmızı işaretlenmez. Yanlış parça, doğru karşılığı ve kural aynı anda gösterilir.</p>
+    <div class="grid2" style="margin-top:7mm">
+      <div class="card" style="border-color:#f2b7a5"><span class="number">YANLIŞ</span><h3 style="text-decoration:line-through; text-decoration-color:#f48765">mit meinen Freund</h3></div>
+      <div class="card soft"><span class="number" style="color:#358958">DOĞRU</span><h3 class="green">mit meinem Freund</h3></div>
+    </div>
+    <div class="callout"><b>Açıklama</b><p><strong>mit</strong> Dativ gerektirir. Freund = <strong>der Freund</strong>. Eril Dativ'te iyelik artikeli <strong>mein → meinem</strong> olur.</p></div>
+    <div class="flow">
+      <div class="node"><b>Kullanıcı yazar</b><span>Textarea state güncellenir</span></div><div class="arrow">→</div>
+      <div class="node"><b>Form kontrol eder</b><span>Noktalama ve büyük/küçük harf normalize edilir</span></div><div class="arrow">→</div>
+      <div class="node"><b>Sonuç görünür</b><span>Doğru veya açıklamalı düzeltme</span></div>
+    </div>
+    <h3 style="margin-top:7mm">Progress sayfasındaki örnek ölçümler</h3>
+    <div class="bars" style="margin-top:4mm">
+      <div class="bar-row"><span>Akkusativ</span><div class="track"><div class="fill" style="width:76%;background:#f48765"></div></div><span>76%</span></div>
+      <div class="bar-row"><span>Dativ</span><div class="track"><div class="fill" style="width:58%"></div></div><span>58%</span></div>
+      <div class="bar-row"><span>Articles</span><div class="track"><div class="fill" style="width:67%;background:#e3b94f"></div></div><span>67%</span></div>
+      <div class="bar-row"><span>Possessivartikel</span><div class="track"><div class="fill" style="width:51%;background:#8b6bb1"></div></div><span>51%</span></div>
+      <div class="bar-row"><span>Word Order</span><div class="track"><div class="fill" style="width:84%;background:#4b80bd"></div></div><span>84%</span></div>
+      <div class="bar-row"><span>Prepositions</span><div class="track"><div class="fill" style="width:46%;background:#54a8a8"></div></div><span>46%</span></div>
+    </div>
+    <div class="grid2" style="margin-top:7mm">
+      <div class="card"><h3>Common Mistakes</h3><p>Yanlış/doğru metin, konu etiketi ve tekrar sayısı birlikte sunulur. Örnekte Dativ hatası <strong>4 kez</strong> görülmüş kabul edilir.</p></div>
+      <div class="card"><h3>Pratiğe geri dönüş</h3><p>“Practice this pattern” bağlantısı kullanıcıyı doğrudan konuşma ekranına taşır. Hata açıklaması açılıp kapanabilir.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Responsive ve PWA</span></div>
+    <div class="eyebrow">Ekran uyumu</div>
+    <h2>Masaüstü ve mobil davranışı</h2>
+    <div class="grid2" style="margin-top:6mm">
+      <div class="card dark">
+        <span class="number" style="color:#f0c85e">MASAÜSTÜ</span>
+        <h3>Kalıcı Grammar Inspector</h3>
+        <p>Konuşma sağ taraftaki yaklaşık 350 px'lik inspector ile iki sütunlu görünür. Panel scroll sırasında üstte sabit kalır; açıklama her zaman erişilebilirdir.</p>
+      </div>
+      <div class="card">
+        <span class="number">MOBİL</span>
+        <h3>Drawer + alt navigasyon</h3>
+        <p>Inspector normal akışı daraltmaz. “Inspect grammar” düğmesiyle alttan açılan, kaydırılabilir bir drawer olur. Navigasyon da ekranın altına taşınır.</p>
+      </div>
+    </div>
+    <h3 style="margin-top:8mm">Responsive tasarım kararları</h3>
+    <ul class="checklist" style="margin-top:4mm">
+      <li>Mobil öncelikli Tailwind breakpoint'leri</li>
+      <li>Dokunma alanı büyük aksiyon düğmeleri</li>
+      <li>Dar ekranda tek sütuna düşen kartlar</li>
+      <li>Esnek konuşma balonu genişlikleri</li>
+      <li>Focus-visible erişilebilirlik işaretleri</li>
+      <li>Reduced-motion tercihine uyum</li>
+      <li>Sticky masaüstü inspector</li>
+      <li>Modal semantiğine sahip mobil drawer</li>
+    </ul>
+    <h3 style="margin-top:8mm">PWA'ya hazırlanan parçalar</h3>
+    <table style="margin-top:3mm">
+      <thead><tr><th>Parça</th><th>Şu an ne sağlıyor?</th><th>Sonraki adım</th></tr></thead>
+      <tbody>
+        <tr><td><code>manifest.webmanifest</code></td><td>Uygulama adı, kısa adı, tema, arka plan, başlangıç URL'si ve standalone display.</td><td>192/512 px ikonlar</td></tr>
+        <tr><td><code>layout.tsx</code></td><td>Manifest bağlantısı ve mobil viewport/theme metadata.</td><td>Apple metadata ve ikon</td></tr>
+        <tr><td>Responsive shell</td><td>Telefonda native uygulamaya yakın menü ve tam ekran akış.</td><td>Install prompt UX</td></tr>
+        <tr><td>Yerel mock veri</td><td>API kapalıyken demo kullanılabilir.</td><td>Service worker cache stratejisi</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><b>Not</b><p>Bu sürüm “PWA olmaya hazır” altyapıyı kurar; henüz service worker veya offline senkronizasyon eklemez. Böylece ilk adım gereksiz karmaşıklık olmadan tamamlanmıştır.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Backend ve API</span></div>
+    <div class="eyebrow">ASP.NET Core Web API</div>
+    <h2>İstekler nasıl işleniyor?</h2>
+    <div class="flow">
+      <div class="node"><b>Controller</b><span>HTTP route ve durum kodu</span></div><div class="arrow">→</div>
+      <div class="node"><b>Service</b><span>Uygulama davranışı</span></div><div class="arrow">→</div>
+      <div class="node"><b>AI / Data sınırı</b><span>Mock bugün, gerçek servis sonra</span></div>
+    </div>
+    <table>
+      <thead><tr><th style="width:16%">Method</th><th style="width:39%">Route</th><th>Davranış</th></tr></thead>
+      <tbody>
+        <tr><td>GET</td><td><code>/health</code></td><td>Veritabanına ihtiyaç duymadan API liveness cevabı verir.</td></tr>
+        <tr><td>GET</td><td><code>/health/database</code></td><td>PostgreSQL bağlantısını ayrıca doğrular; yoksa 503 verir.</td></tr>
+        <tr><td>POST</td><td><code>/api/conversations</code></td><td>Senaryo, seviye ve detayla mock konuşma başlatır; 201 döner.</td></tr>
+        <tr><td>GET</td><td><code>/api/conversations/{id}</code></td><td>Bellekte tutulan konuşmayı kimliğiyle getirir.</td></tr>
+        <tr><td>POST</td><td><code>/api/messages</code></td><td>Mock koç cevabı ve gerekirse düzeltme döndürür.</td></tr>
+        <tr><td>POST</td><td><code>/api/grammar/analyze</code></td><td>Seçili ifade için yapılandırılmış gramer analizi verir.</td></tr>
+        <tr><td>GET</td><td><code>/api/progress</code></td><td>Altı konu için mock ilerleme yüzdelerini döndürür.</td></tr>
+        <tr><td>GET</td><td><code>/api/mistakes</code></td><td>Tekrarlanan hata, doğru şekil, konu ve sayıyı döndürür.</td></tr>
+      </tbody>
+    </table>
+    <h3 style="margin-top:7mm">Mock AI sınırı</h3>
+    <pre>public interface IAiConversationClient
+{
+    Task&lt;MessageResponse&gt; ReplyAsync(...);
+    Task&lt;GrammarAnalysisResponse&gt; AnalyzeAsync(...);
+}</pre>
+    <p class="small"><code>MockAiConversationClient</code> bu arayüzü bugün sabit, tahmin edilebilir cevaplarla uygular. İleride <code>OpenAiConversationClient</code> aynı arayüzü uygular; controller veya conversation service değişmeden kalabilir.</p>
+    <div class="callout"><b>Temiz sınır</b><p>API sözleşmeleri entity'lerden ayrıdır. Dış dünyaya doğrudan veritabanı nesnesi göndermek yerine <code>Contracts/</code> altındaki request/response record'ları kullanılır.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Önemli Backend Dosyaları</span></div>
+    <div class="eyebrow">Dosya rehberi</div>
+    <h2>Backend'in kritik parçaları</h2>
+    <table>
+      <thead><tr><th style="width:43%">Dosya</th><th>Görevi ve önemi</th></tr></thead>
+      <tbody>
+        <tr><td><code>Program.cs</code></td><td>DbContext, controller, CORS, problem details ve servis dependency injection kayıtlarının merkezi. Development'ta HTTP, production'da HTTPS yönlendirmesi uygular.</td></tr>
+        <tr><td><code>appsettings.json</code></td><td>PostgreSQL connection string, frontend origin ve log seviyelerini barındırır.</td></tr>
+        <tr><td><code>Data/SprechenAiDbContext.cs</code></td><td>Altı DbSet'i ve User–Conversation–Message–Analysis gibi ilişkileri Fluent API ile tanımlar.</td></tr>
+        <tr><td><code>Services/IAiConversationClient.cs</code></td><td>Gelecekteki gerçek AI sağlayıcısının uyması gereken iki operasyonluk sınır.</td></tr>
+        <tr><td><code>Services/MockAiConversationClient.cs</code></td><td>AI çağrısı yapmadan mesaj cevabı, Dativ düzeltmesi ve gramer analizi üretir.</td></tr>
+        <tr><td><code>Services/ConversationService.cs</code></td><td>Konuşmayı başlatır ve thread-safe <code>ConcurrentDictionary</code> içinde geçici olarak tutar.</td></tr>
+        <tr><td><code>Services/ProgressService.cs</code></td><td>Progress ve mistake controller'larının kullandığı mock öğrenme verisini sağlar.</td></tr>
+        <tr><td><code>Controllers/HealthController.cs</code></td><td>API ve PostgreSQL sağlığını birbirinden ayırır; DB kapalıyken ana health çalışır.</td></tr>
+        <tr><td><code>Controllers/GrammarController.cs</code></td><td><code>POST /api/grammar/analyze</code> isteğini AI client sınırına yönlendirir.</td></tr>
+        <tr><td><code>Contracts/*Contracts.cs</code></td><td>JSON giriş/çıkış biçimlerini güçlü tipli C# record'larıyla tanımlar.</td></tr>
+        <tr><td><code>Domain/Entities/*.cs</code></td><td>Gelecekte PostgreSQL'de saklanacak alanları ve navigation property'leri içerir.</td></tr>
+        <tr><td><code>SprechenAI.Api.csproj</code></td><td>.NET 9 hedefini, EF Core Design ve Npgsql PostgreSQL paketlerini tanımlar.</td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:5mm">
+      <div class="card"><h3>CORS</h3><p class="small">Varsayılan olarak <code>http://localhost:3000</code> frontend origin'ine izin verir. Değer konfigürasyondan değiştirilebilir.</p></div>
+      <div class="card"><h3>Hata formatı</h3><p class="small"><code>AddProblemDetails()</code> beklenmeyen API hataları için standartlaştırılmış cevap altyapısı sağlar.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>PostgreSQL Modeli</span></div>
+    <div class="eyebrow">Veri katmanı</div>
+    <h2>Hazırlanan entity'ler</h2>
+    <div class="erd">
+      <div class="entity"><b>User</b><span>DisplayName<br>Email (unique)<br>LearningLevel</span></div><div class="relation">1 → N</div>
+      <div class="entity"><b>Conversation</b><span>Scenario<br>LearningLevel<br>ExplanationDetail<br>CompletedAt</span></div><div class="relation">1 → N</div>
+      <div class="entity"><b>Message</b><span>Role<br>GermanText<br>TurkishTranslation</span></div>
+    </div>
+    <div class="grid3">
+      <div class="entity"><b>GrammarAnalysis</b><span>Message ile 1:1<br>SelectedPhrase<br>BaseNoun / Article<br>Case / Explanation<br>Transformation / Labels</span></div>
+      <div class="entity"><b>Mistake</b><span>User ile N:1<br>Incorrect / Correct<br>Topic / Explanation<br>OccurrenceCount</span></div>
+      <div class="entity"><b>UserProgress</b><span>User ile N:1<br>Topic<br>MasteryPercentage<br>Attempts<br>LastPracticedAt</span></div>
+    </div>
+    <h3 style="margin-top:8mm">Önemli veri tasarımı kararları</h3>
+    <div class="grid2" style="margin-top:3mm">
+      <div class="card"><h4>Ortak kimlik ve zaman</h4><p class="small">Bütün entity'ler <code>BaseEntity</code> üzerinden Guid <code>Id</code>, <code>CreatedAt</code> ve <code>UpdatedAt</code> alır.</p></div>
+      <div class="card"><h4>Kontrollü cascade</h4><p class="small">User silinirse bağlı konuşma, hata ve ilerleme kayıtları; conversation silinirse mesajları; message silinirse analizi silinecek biçimde eşlendi.</p></div>
+      <div class="card"><h4>Tekillik</h4><p class="small">Email unique'tir. Ayrıca aynı kullanıcı + konu için birden fazla <code>UserProgress</code> kaydı oluşması engellenir.</p></div>
+      <div class="card"><h4>Henüz migration yok</h4><p class="small">Entity ve mapping'ler hazırdır; ilk migration kalıcı veri geliştirmesi başladığında kontrollü olarak üretilecektir.</p></div>
+    </div>
+    <h3 style="margin-top:7mm">Docker Compose PostgreSQL</h3>
+    <pre>docker compose up -d postgres
+
+Database : sprechenai
+Username : sprechenai
+Port     : 5432
+Image    : postgres:16-alpine</pre>
+    <p class="small">Kalıcı Docker volume ve <code>pg_isready</code> healthcheck tanımlıdır. Değerler kökteki <code>.env</code> ile değiştirilebilir; örnek değerler <code>.env.example</code> içindedir.</p>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Kurulum ve Doğrulama</span></div>
+    <div class="eyebrow">Geliştirici teslimi</div>
+    <h2>Projeyi çalıştırma</h2>
+    <div class="grid2" style="margin-top:6mm">
+      <div>
+        <h3>Frontend</h3>
+        <pre>cd frontend
+npm install
+npm run dev</pre>
+        <p class="small">Tarayıcı: <strong>http://localhost:3000</strong></p>
+      </div>
+      <div>
+        <h3>Backend</h3>
+        <pre>cd backend
+dotnet restore SprechenAI.slnx
+dotnet run --project \
+  SprechenAI.Api/SprechenAI.Api.csproj \
+  --launch-profile http</pre>
+        <p class="small">API: <strong>http://localhost:5080</strong></p>
+      </div>
+    </div>
+    <h3 style="margin-top:6mm">Gerçekleştirilen kontroller</h3>
+    <table style="margin-top:3mm">
+      <thead><tr><th>Kontrol</th><th>Sonuç</th><th>Ne doğrulandı?</th></tr></thead>
+      <tbody>
+        <tr><td><code>npm run typecheck</code></td><td class="green"><strong>Başarılı</strong></td><td>Strict TypeScript tip kontrolü</td></tr>
+        <tr><td><code>npm run build</code></td><td class="green"><strong>Başarılı</strong></td><td>4 sayfanın optimize production build'i</td></tr>
+        <tr><td><code>dotnet build</code></td><td class="green"><strong>Başarılı</strong></td><td>0 hata, 0 uyarı</td></tr>
+        <tr><td><code>GET /health</code></td><td class="green"><strong>200</strong></td><td>API çalışma zamanı</td></tr>
+        <tr><td><code>POST /api/conversations</code></td><td class="green"><strong>201</strong></td><td>Konuşma oluşturma cevabı</td></tr>
+        <tr><td><code>POST /api/grammar/analyze</code></td><td class="green"><strong>200</strong></td><td>Yapılandırılmış Dativ açıklaması</td></tr>
+        <tr><td>Headless Chrome kontrolü</td><td class="green"><strong>Başarılı</strong></td><td>Mobil conversation görünümü</td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:6mm">
+      <div class="card soft"><h3>Bu bilgisayarda hazır</h3><p class="small"><strong>Node.js 24 LTS</strong><br><strong>.NET SDK 9+</strong><br>npm bağımlılıkları ve lockfile</p></div>
+      <div class="card" style="border-color:#efc6b9"><h3>Eksik prerequisite</h3><p class="small"><strong>Docker Desktop veya yerel PostgreSQL 16</strong><br>Bu nedenle DB health endpoint'i container başlatıldıktan sonra kontrol edilmelidir.</p></div>
+    </div>
+    <div class="callout"><b>Ana rehber</b><p>Tüm komutlar, ortam değişkenleri, endpoint listesi ve migration akışı proje kökündeki <code>README.md</code> dosyasında da bulunur.</p></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="brand-icon">▰</span> SprechenAI</div><span>Sonuç ve Yol Haritası</span></div>
+    <div class="eyebrow">Teslim özeti</div>
+    <h2>Sağlam bir ilk ürün temeli</h2>
+    <p class="lead">SprechenAI'nin ilk adımı yalnızca statik ekranlardan oluşmuyor. Kullanıcı açısından bütün ana etkileşimler çalışıyor; teknik tarafta ise gerçek AI ve kalıcı veriye geçiş için açık sınırlar hazır.</p>
+    <div class="grid3" style="margin-top:8mm">
+      <div class="card"><span class="number">ŞİMDİ</span><h3>Demo edilebilir</h3><p class="small">Senaryo seçimi, konuşma, gramer analizi ve progress akışı uçtan uca gösterilebilir.</p></div>
+      <div class="card"><span class="number">SONRA</span><h3>API'ye bağlanabilir</h3><p class="small">Frontend mock kaynakları servis çağrılarıyla değiştirilebilir; component yapısı korunur.</p></div>
+      <div class="card"><span class="number">DAHA SONRA</span><h3>AI eklenebilir</h3><p class="small"><code>IAiConversationClient</code> için gerçek OpenAI implementasyonu yazılabilir.</p></div>
+    </div>
+    <h3 style="margin-top:9mm">Önerilen sonraki geliştirme sırası</h3>
+    <div style="margin-top:4mm">
+      <div class="case-line"><b>01 · Migration</b><span>İlk EF Core migration'ını üret, development veritabanını oluştur.</span></div>
+      <div class="case-line"><b>02 · API client</b><span>Frontend için tipli bir fetch/service katmanı ekle ve mock/API modu seçilebilir yap.</span></div>
+      <div class="case-line"><b>03 · Kimlik</b><span>User entity'sini gerçek oturum ve kullanıcı profiliyle bağla.</span></div>
+      <div class="case-line"><b>04 · OpenAI</b><span>Prompt, structured output, güvenlik ve hata yönetimiyle gerçek client'ı uygula.</span></div>
+      <div class="case-line"><b>05 · Persistence</b><span>Conversation, Message, Mistake ve UserProgress verilerini kalıcılaştır.</span></div>
+      <div class="case-line"><b>06 · PWA</b><span>İkon, service worker, cache ve offline/install deneyimini tamamla.</span></div>
+      <div class="case-line"><b>07 · Test</b><span>Frontend component testleri, API integration testleri ve E2E akışları ekle.</span></div>
+    </div>
+    <div class="card dark" style="margin-top:9mm; padding:7mm">
+      <div class="eyebrow" style="color:#f0c85e">Tek cümleyle</div>
+      <h3 style="font-size:19pt; line-height:1.25">SprechenAI artık modern, responsive, çalışan mock deneyime ve büyümeye uygun teknik omurgaya sahip.</h3>
+    </div>
+    <p class="footer-note">Rapor kaynağı: docs/SprechenAI_Proje_Raporu.html</p>
+  </section>
+</body>
+</html>

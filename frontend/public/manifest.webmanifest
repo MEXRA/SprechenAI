@@ -1,0 +1,11 @@
+{
+  "name": "SprechenAI German Coach",
+  "short_name": "SprechenAI",
+  "description": "Practice confident German for real-life conversations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5ee",
+  "theme_color": "#245b3d",
+  "icons": []
+}
+
